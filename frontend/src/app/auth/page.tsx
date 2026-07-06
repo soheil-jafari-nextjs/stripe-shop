@@ -39,14 +39,14 @@ const AuthPage = () => {
          formData.append('cart_items', JSON.stringify(cart.items))
          const result = await setCookieFetch('auth/check-pin', formData);
          if (result?.error) { return toast.error(result.error) }
-         setTimeout(() => { router.push(result.redirect ? result.redirect : '/') }, 8000);
+         setTimeout(() => { router.push(result.redirect ? '/' : '/') }, 200);
       }
       else if (formSituation == 'PASSWORD') {
          formData.append('password', password);
          formData.append('cart_items', JSON.stringify(cart.items))
          const result = await setCookieFetch('auth/check-password', formData);
          if (result?.error) { return toast.error(result.error) }
-         setTimeout(() => { router.push(result.redirect ? result.redirect : '/') }, 8000);
+         setTimeout(() => { router.push(result.redirect ? '/' : '/') }, 200);
       }
    }
    const resender: () => void = async () => {
