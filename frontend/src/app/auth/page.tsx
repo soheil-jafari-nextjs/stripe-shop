@@ -46,6 +46,7 @@ const AuthPage = () => {
          formData.append('cart_items', JSON.stringify(cart.items))
          const result = await setCookieFetch('auth/check-password', formData);
          if (result?.error) { return toast.error(result.error) }
+         console.log('result.redirect : ', result.redirect)
          setTimeout(() => { router.push(result.redirect ? '/' : '/') }, 200);
       }
    }

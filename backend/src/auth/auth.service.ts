@@ -165,6 +165,9 @@ export class AuthService {
                }
             )
             const cart_items: { quantity: number, productId: string }[] = body.cart_items && body.cart_items != 'undefined' ? JSON.parse(body.cart_items) : [];
+            console.log('//////////////////',)
+            console.log('accessToken : ', accessToken)
+            console.log('refreshToken : ', refreshToken)
 
             await this.cartService.findCartAndUpdate({ userId: createdUser.id, products: cart_items })
 
@@ -215,6 +218,9 @@ export class AuthService {
             const cart_items: { quantity: number, productId: string }[] = body.cart_items && body.cart_items != 'undefined' ? JSON.parse(body.cart_items) : [];
             await this.cartService.findCartAndUpdate({ userId: foundedUser.id, products: cart_items })
 
+            console.log('//////////////////',)
+            console.log('accessToken : ', accessToken)
+            console.log('refreshToken : ', refreshToken)
             return { message: "Code is true.", redirect: '/profile', };
          }
       }

@@ -18,6 +18,8 @@ export async function serversideGetter(address: string,) {
 }
 
 export async function setCookieFetch(address: string, formData: FormData) {
+   console.log('in requester')
+   console.log('Object.fromEntries(formData) : ', Object.fromEntries(formData))
    const res = await fetch(
       `${API_URL}/${address}`,
       {
@@ -27,6 +29,7 @@ export async function setCookieFetch(address: string, formData: FormData) {
       }
    );
    const parsedRes = await res.json();
+   console.log('res.ok : ', res.ok)
    if (!res.ok) {
       return {
          error:
@@ -36,12 +39,16 @@ export async function setCookieFetch(address: string, formData: FormData) {
       }
    }
 
+   console.log('parsedRes : ', parsedRes)
    const cookieString = res.headers.get('set-cookie');
 
+   console.log('cookieString : ', cookieString)
    if (cookieString) {
       const actoken = cookieString.match(/actoken=([^;]+)/)?.[1];
       const rftoken = cookieString.match(/rftoken=([^;]+)/)?.[1];
       const cookieStore = await cookies();
+      console.log('actoken : ', actoken)
+      console.log('rftoken : ', rftoken)
 
       if (actoken) {
          cookieStore.set({
@@ -64,6 +71,7 @@ export async function setCookieFetch(address: string, formData: FormData) {
          });
       }
    }
+   console.log('parsedRes.redirect : ', parsedRes.redirect)
    return { redirect: `${parsedRes.redirect}` }
 }
 
