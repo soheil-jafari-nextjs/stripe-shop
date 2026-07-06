@@ -1,0 +1,57 @@
+version: '1.0'
+
+services:
+
+  database:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: database
+    volumes:
+      - database-data:/var/lib/postgresql
+    networks:
+      - mynet
+
+  shop_backend:
+    build:
+      context: ./backend
+    ports:
+      - '3001:3001'
+    environment:
+      - DATABASE_URL=postgresql://postgres:root@database:5432/postgres
+      - JWT_SECRET=54a0s6df8as68d4f60a8s4d60f08a406e8r6as8d406as4d6f84a0s8df49a8s4df0a9s8df46as5d4
+      - JWT_REFRESH_SECRET=54aa84sd06f84a6s8df468asd0s6df8as68d4f60a8s4d60f08a406e8r6as8d406as4d6f84a0s8df49a8s4df0a9s8df46as5d4
+      - JWT_ACCESS_SECRET=54a0s6das68d0f46as08d46f8a4s60d8f4a6s8df8as68d4f60a8s4d60f08a406e8r6as8d406as4d6f84a0s8df49a8s4df0a9s8df46as5d4
+      - JWT_ACCESS_EXPIRES_IN=900000
+      - JWT_REFRESH_EXPIRES_IN=2592000000
+      - JWT_EXPIRATION=300000
+      - STRIPE_SECRET_KEY=sk_test_51To06oJqiMaLlh8FPQl3X97yTecM8NnfU9JS8XiGmx1M3ivouYE6wYGBbYd98P1cs1DICZSwh3PfaTyyNoaWzpnC00Fuhv5H5c
+      - WEBSITE_CLIENT_URL=http://localhost:3000
+
+    networks:
+      - mynet
+    depends_on:
+      - database
+
+  shop_frontend:
+    build:
+      context: ./frontend
+    networks:
+      - mynet
+    depends_on:
+      - shop_backend
+    ports:
+      - '3000:3000'
+    environment:
+      - API_URL=http://shop_backend:3001
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - FRONT_API_URL=http://localhost:3000
+      - NEXT_PUBLIC_FRONT_API_URL=http://localhost:3000
+      - NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_test_51To06oJqiMaLlh8FdIPJDNA9KVzcr940iMX7sBhifi3GTxDk4aPdwniHut7Z2GKHS1iQ6p5nIJKnAYp2n9gw5L6y00KTa9hgpK
+
+volumes:
+  database-data:
+
+networks:
+  mynet:
+    driver: bridge

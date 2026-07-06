@@ -1,0 +1,156 @@
+generator client {
+   provider = "prisma-client-js"
+}
+
+datasource db {
+   provider = "postgresql"
+   url      = env("DATABASE_URL")
+}
+
+model Token {
+   id        String   @id @default(uuid())
+   createdAt DateTime @default(now())
+   code      String
+   userId    String
+   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+   ADMIN
+   USER
+}
+
+model User {
+   id           String        @id @default(uuid())
+   createdAt    DateTime      @default(now())
+   password     String?
+   phone        String        @unique
+   role         Role          @default(USER)
+   orders       Order[]
+   tokens       Token[]
+   carts        Cart[]
+   transactions Transaction[]
+}
+
+model Product {
+   id          String      @id() @default(uuid())
+   createdAt   DateTime    @default(now())
+   title       String
+   slug        String      @unique
+   description String
+   price       Float
+   quantity    Int         @default(0)
+   cartItems   CartItem[]
+   orderItems  OrderItem[]
+}
+
+model OrderItem {
+   id        String   @id @default(uuid())
+   createdAt DateTime @default(now())
+   price     Float
+   title     String
+   quantity  Float
+
+   productId String
+   product   Product @relation(fields: [productId], references: [id])
+
+   orderId String
+   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+enum orderStatus {
+   PENDING
+   PAID
+   CANCELLED
+   EXPIRED
+   REFUNDED
+}
+
+model Order {
+   id         String      @id() @default(uuid())
+   createdAt  DateTime    @default(now())
+   totalPrice Float
+   status     orderStatus
+
+   userId String
+   user   User   @relation(fields: [userId], references: [id])
+
+   orderItems   OrderItem[]
+   transactions Transaction[]
+   ship         Ship?
+}
+
+model Otp {
+   id         String   @id @default(uuid())
+   createdAt  DateTime @default(now())
+   phone      String
+   code       String
+   expired_at DateTime
+}
+
+model Cart {
+   id        String   @id @default(uuid())
+   createdAt DateTime @default(now())
+
+   userId String
+   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+   items CartItem[]
+}
+
+model CartItem {
+   id        String   @id @default(uuid())
+   createdAt DateTime @default(now())
+   quantity  Float
+
+   productId String
+   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+   cartId String
+   cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
+}
+
+enum TransactionStatus {
+   PENDING
+   SUCCESS
+   FAILED
+}
+
+enum PaymentGateway {
+   STRIPE
+}
+
+model Transaction {
+   id        String   @id @default(uuid())
+   createdAt DateTime @default(now())
+   updatedAt DateTime @default(now())
+
+   status TransactionStatus
+   amount Float
+
+   gatewayRedirectId String         @unique
+   paymentGateway    PaymentGateway
+
+   orderId String
+   order   Order  @relation(fields: [orderId], references: [id])
+
+   userId String
+   user   User   @relation(fields: [userId], references: [id])
+}
+
+enum ShipStatus {
+   PENDING
+   SHIPPED
+   DELIVERED
+}
+
+model Ship {
+   id           String     @id @default(uuid())
+   createdAt    DateTime   @default(now())
+   updatedAt    DateTime   @default(now())
+   trackingCode String?
+   status       ShipStatus
+
+   orderId String @unique
+   order   Order  @relation(fields: [orderId], references: [id])
+}
