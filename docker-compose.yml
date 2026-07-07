@@ -2,6 +2,16 @@ version: '1.0'
 
 services:
 
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - shop_frontend
+      - shop_backend
+    networks:
+      - mynet
   database:
     image: postgres:latest
     environment:
@@ -15,8 +25,8 @@ services:
   shop_backend:
     build:
       context: ./backend
-    ports:
-      - '3001:3001'
+    expose:
+      - '3001'
     environment:
       - DATABASE_URL=postgresql://postgres:root@database:5432/postgres
       - JWT_SECRET=54a0s6df8as68d4f60a8s4d60f08a406e8r6as8d406as4d6f84a0s8df49a8s4df0a9s8df46as5d4
@@ -40,8 +50,8 @@ services:
       - mynet
     depends_on:
       - shop_backend
-    ports:
-      - '3000:3000'
+    expose:
+      - '3000'
     environment:
       - API_URL=http://shop_backend:3001
       - NEXT_PUBLIC_API_URL=http://localhost:3001
