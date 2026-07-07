@@ -41,36 +41,44 @@ export async function setCookieFetch(address: string, formData: FormData) {
 
    console.log('parsedRes : ', parsedRes)
    const cookieString = res.headers.get('set-cookie');
+   // const cookieStore = await cookies();
 
    console.log('cookieString : ', cookieString)
    if (cookieString) {
       const actoken = cookieString.match(/actoken=([^;]+)/)?.[1];
       const rftoken = cookieString.match(/rftoken=([^;]+)/)?.[1];
-      const cookieStore = await cookies();
       console.log('actoken : ', actoken)
       console.log('rftoken : ', rftoken)
 
       if (actoken) {
-         cookieStore.set({
-            name: 'actoken',
-            value: actoken,
-            httpOnly: true,
-            secure: true,
-            path: '/',
-            expires: new Date(jwtDecode(actoken).exp! * 1000),
-         });
+         // cookieStore.set({
+         //    name: 'actoken',
+         //    value: actoken,
+         //    httpOnly: true,
+         //    secure: true,
+         //    path: '/',
+         //    expires: new Date(jwtDecode(actoken).exp! * 1000),
+         // });
+         setCookieHeader(actoken, 'actoken')
       }
       if (rftoken) {
-         cookieStore.set({
-            name: 'rftoken',
-            value: rftoken,
-            httpOnly: true,
-            secure: true,
-            path: '/',
-            expires: new Date(jwtDecode(rftoken).exp! * 1000),
-         });
+         // cookieStore.set({
+         //    name: 'rftoken',
+         //    value: rftoken,
+         //    httpOnly: true,
+         //    secure: true,
+         //    path: '/',
+         //    expires: new Date(jwtDecode(rftoken).exp! * 1000),
+         // });
+         setCookieHeader(rftoken, 'rftoken')
       }
    }
+
+   const newcookieStore = await cookies();
+   console.log("AFTER SET");
+   console.log(newcookieStore.getAll());
+
+
    console.log('parsedRes.redirect : ', parsedRes.redirect)
    return { redirect: `${parsedRes.redirect}` }
 }
@@ -80,4 +88,16 @@ export async function tokenRemover() {
    cookieStore.delete({ name: "actoken", path: "/", });
    cookieStore.delete({ name: "rftoken", path: "/", });
    redirect('/');
+}
+
+export async function setCookieHeader(token: string, title: string) {
+   const cookieStore = await cookies();
+   return cookieStore.set({
+      name: title,
+      value: token,
+      httpOnly: true,
+      secure: true,
+      path: '/',
+      expires: new Date(jwtDecode(token).exp! * 1000),
+   });
 }
