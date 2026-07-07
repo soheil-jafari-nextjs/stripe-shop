@@ -54,7 +54,7 @@ export async function setCookieHeader(token: string, title: string) {
       name: title,
       value: token,
       httpOnly: true,
-      secure: false,
+      secure: true,
       path: '/',
       expires: new Date(jwtDecode(token).exp! * 1000),
    });
