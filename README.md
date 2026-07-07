@@ -120,17 +120,11 @@ Next.js   NestJS
        PostgreSQL
 ```
 
----
-
-## 📷 Screenshots
-
-(Add screenshots here)
-
----
-
 ## 🎥 Demo
 
-(Add demo video here)
+A complete walkthrough of the application is available here:
+
+👉 https://dl.mernfa.ir/public-files/stripe-shop.mp4
 
 ---
 
@@ -139,7 +133,7 @@ Next.js   NestJS
 ```bash
 git clone ...
 
-docker compose up --build
+docker compose up -d --build
 ```
 
 ---
@@ -167,7 +161,3 @@ Required variables include:
 - Microservices
 
 ---
-
-## License
-
-MIT
